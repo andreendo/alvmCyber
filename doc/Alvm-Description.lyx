@@ -1,0 +1,673 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Specification of AlvmCyber Services
+\end_layout
+
+\begin_layout Author
+Andre Takeshi Endo
+\end_layout
+
+\begin_layout Section
+Description
+\end_layout
+
+\begin_layout Standard
+We herein propose a fictitious scenario to illustrate the service composition
+ adopted as running example.
+ 
+\family sans
+ALVM
+\family default
+ is a company that assemblies and sells robots.
+ Its main product is a robot called 
+\family sans
+AlvmCyber
+\family default
+.
+ 
+\family sans
+ALVM
+\family default
+ builds all elements needed to assembly this robot, except for two types
+ of component: (i) the two arms and (ii) the mobile base.
+ The 
+\family sans
+AlvmCyber
+\family default
+ robot works only with the mobile base provided by the 
+\family sans
+Gehen
+\family default
+ vendor and the arms should be from either 
+\family sans
+Braco
+\family default
+ or 
+\family sans
+Pegar
+\family default
+ vendors.
+ 
+\family sans
+ALVM
+\family default
+ has a better deal with 
+\family sans
+Braco
+\family default
+, thus arms from 
+\family sans
+Pegar
+\family default
+ are only bought if 
+\family sans
+Braco
+\family default
+ has not enough arms for a given purchase.
+ All communication between the companies are made through Web services.
+ We focus on the composite service that conducts the purchase and is provided
+ by the 
+\family sans
+ALVM
+\family default
+ company.
+ This service, called 
+\emph on
+AlvmCyberPurchaseService
+\emph default
+ (
+\family typewriter
+ACPS
+\family default
+), interacts with four services: 
+\emph on
+GehenMobileBaseService
+\emph default
+ (
+\family typewriter
+GMBS
+\family default
+), 
+\emph on
+BracoArmsService
+\emph default
+ (
+\family typewriter
+BAS
+\family default
+), 
+\emph on
+PegarArmsService
+\emph default
+ (
+\family typewriter
+PAS
+\family default
+), and 
+\emph on
+AlvmOrderService
+\emph default
+ (
+\family typewriter
+AOS
+\family default
+).
+ 
+\end_layout
+
+\begin_layout Standard
+Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:alvmcyber-interfaces"
+
+\end_inset
+
+ illustrates the operations and data types provided by these services' WSDLs.
+ The dark gray box was used to specify the composite service, light gray
+ boxes for the partner services, and white boxes for data types.
+ We also show the relationships between the composition and partner services,
+ as well as the dependencies between interfaces and data types.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename alvmCyber-interfaces.png
+	lyxscale 90
+	width 99col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:alvmcyber-interfaces"
+
+\end_inset
+
+WSDL interfaces and relationships for the 
+\family sans
+AlvmCyber
+\family default
+ example.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Composite service 
+\family typewriter
+ACPS
+\family default
+ has two operations: 
+\family sans
+\size small
+checkPrice
+\family default
+\size default
+ and 
+\family sans
+\size small
+orderOffer
+\family default
+\size default
+.
+ Operation 
+\family sans
+\size small
+checkPrice
+\family default
+\size default
+ receives a request from a client to verify the price for a given number
+ of robots.
+ Then, it interacts with 
+\family typewriter
+GMBS
+\family default
+, 
+\family typewriter
+BAS
+\family default
+ and 
+\family typewriter
+PAS
+\family default
+ to check the supplies' availability (mobile base and arms) and their prices.
+ Based on this interaction, an offer is calculated and returned to the client.
+ The client can consider the offer and order it using operation 
+\family sans
+\size small
+orderOffer
+\family default
+\size default
+.
+ When invoked, this operation just forwards the offer's information to the
+ 
+\family typewriter
+AOS
+\family default
+ service that will handle the remaining process for the 
+\family sans
+ALVM 
+\family default
+company.
+\end_layout
+
+\begin_layout Standard
+We describe the operations' workflows for the composite service 
+\family typewriter
+ACPS
+\family default
+ as follows.
+ 
+\end_layout
+
+\begin_layout Section
+Operation: checkPrice
+\end_layout
+
+\begin_layout Standard
+Workflow description (functional): 
+\end_layout
+
+\begin_layout Enumerate
+
+\family sans
+\size small
+checkPrice
+\family default
+\size default
+ is invoked.
+ 
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+If there is some invalid data ('numberOfRobots' < 5 or 'clientId' 
+\begin_inset Formula $\notin$
+\end_inset
+
+{
+\begin_inset Quotes erd
+\end_inset
+
+ABC
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+XYZ
+\begin_inset Quotes erd
+\end_inset
+
+}), return a 
+\emph on
+CheckResponse
+\emph default
+ with attribute 'validOffer=false' (other attributes empty and numerical
+ attributes with negative values); the process finishes.
+ Add an error description in atribute 'message' of 
+\emph on
+CheckResponse.
+
+\emph default
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Invoke 
+\family typewriter
+BAS
+\family default
+ and
+\family typewriter
+ GMBS
+\family default
+ concurrently.
+ The client code for both services is 
+\begin_inset Quotes eld
+\end_inset
+
+ALVMCYBER
+\begin_inset Quotes erd
+\end_inset
+
+; the arm's model is 
+\begin_inset Quotes eld
+\end_inset
+
+ARM-TYPE01
+\begin_inset Quotes erd
+\end_inset
+
+ and the mobile base's model is 
+\begin_inset Quotes eld
+\end_inset
+
+A1
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Recall that the robot has two arms and, therefore, the amout for 
+\family typewriter
+BAS
+\family default
+ is two times 'numberOfRobots'.
+\end_layout
+
+\begin_layout Enumerate
+If 
+\family typewriter
+GMBS
+\family default
+ has no supply, return a 
+\emph on
+CheckResponse
+\emph default
+ as in Step 1.a.
+ Add an error description in atribute 'message' of 
+\emph on
+CheckResponse.
+
+\emph default
+ 
+\end_layout
+
+\begin_layout Enumerate
+If 
+\family typewriter
+GMBS
+\family default
+ has supply but 
+\family typewriter
+BAS
+\family default
+ has not, invoke 
+\family typewriter
+PAS
+\family default
+.
+ The arm's model is 
+\begin_inset Quotes eld
+\end_inset
+
+PEGAR-ARM-TYPE1234
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+If 
+\family typewriter
+PAS
+\family default
+ has not supply as well, return a 
+\emph on
+CheckResponse
+\emph default
+ as in Step 1.a.
+ Add an error description in atribute 'message' of 
+\emph on
+CheckResponse.
+
+\emph default
+ 
+\end_layout
+
+\begin_layout Enumerate
+If there are positive responses for the mobile base and arms, return a 
+\emph on
+CheckResponse
+\emph default
+ filled with attribute 'validOffer=true' and correct values for other attributes.
+ The formula to calculate attribute 'totalPrice' is 
+\begin_inset Quotes eld
+\end_inset
+
+('price' returned from 
+\family typewriter
+GMBS
+\family default
+) + ('price' or 'value' returned from 
+\family typewriter
+BAS
+\family default
+ or 
+\family typewriter
+PAS
+\family default
+, respectively) + 
+\begin_inset Formula $2100.00$
+\end_inset
+
+ * numberOfRobots
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Attribute 'unitPrice' can be derived from 
+\begin_inset Quotes eld
+\end_inset
+
+'totalPrice' / 'numberOfRobots'
+\begin_inset Quotes erd
+\end_inset
+
+.
+ Create a unique value for attribute 'offerCode' and save this information
+ (in memory).
+ Add a successful description in atribute 'message' of 
+\emph on
+CheckResponse.
+\end_layout
+
+\begin_layout Section
+Operation: orderOffer
+\end_layout
+
+\begin_layout Standard
+Workflow description (functional): 
+\end_layout
+
+\begin_layout Enumerate
+
+\family sans
+\size small
+orderOffer
+\family default
+\size default
+ is invoked.
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+If there is some invalid data ('clientId' 
+\begin_inset Formula $\notin$
+\end_inset
+
+{
+\begin_inset Quotes erd
+\end_inset
+
+ABC
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+XYZ
+\begin_inset Quotes erd
+\end_inset
+
+} or 'offerCode' 
+\begin_inset Formula $\notin$
+\end_inset
+
+'service memory'), return an 
+\emph on
+offerAck
+\emph default
+ with an error message.
+ An error message should also be returned if the offer is not active, i.e.,
+ 
+\emph on
+orderOffer
+\emph default
+ was already invoked for the provided 'offerCode'.
+ 
+\end_layout
+
+\end_deeper
+\begin_layout Enumerate
+Invoke 
+\family typewriter
+AOS
+\family default
+ with the 'offerCode' provided.
+ 
+\end_layout
+
+\begin_layout Enumerate
+Deactivate the offer (other invocations with this 'offerCode' should return
+ an error message, see Step 1.a).
+\end_layout
+
+\begin_layout Enumerate
+return an 
+\emph on
+offerAck
+\emph default
+ with a successful message.
+ 
+\end_layout
+
+\begin_layout Section
+Test Model
+\end_layout
+
+\begin_layout Standard
+Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:ESG4WSC-alvmCyber"
+
+\end_inset
+
+ illustrates an event-based model to test the operations of the 
+\family typewriter
+ACPS
+\family default
+ service.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement h
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename alvmCyber-esg4wsc-model.png
+	lyxscale 80
+	width 99text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Caption
+
+\begin_layout Plain Layout
+ESG4WSC for the 
+\family sans
+AlvmCyber
+\family default
+ example.
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:ESG4WSC-alvmCyber"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
