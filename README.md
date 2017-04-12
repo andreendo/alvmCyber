@@ -1,4 +1,4 @@
-##AlvmCyber
+## AlvmCyber
 
 This is a composite service used as a running example for the following paper.
 
@@ -12,7 +12,7 @@ Publication:
 } 
 ```
 
-##Installation
+## Installation
 
 Execution:
 - Class "br.usp.icmc.labes.alvmcyber.Main" starts all servers.
