@@ -4,11 +4,19 @@ This is a composite service used as a running example for the following paper.
 
 Publication:
 ```
-@Article{EndoSimao17STVR,
-    author = "Andre Takeshi Endo and Adenilso Simao",
-    title = "Event tree algorithms to generate test sequences for composite web services",
-    Journal = "Software Testing, Verification and Reliability (STVR)",
-    year = "2017", 
+@Article{EndoSimao19STVR,
+	author = {Endo, Andre Takeshi and Simao, Adenilso},
+	title = {Event tree algorithms to generate test sequences for composite Web services},
+	journal = {Software Testing, Verification and Reliability},
+	volume = {29},
+	number = {3},
+	pages = {e1637},
+	keywords = {event sequence graphs, model-based testing, service composition, service-oriented architecture, test case generation, web services},
+	doi = {10.1002/stvr.1637},
+	url = {https://onlinelibrary.wiley.com/doi/abs/10.1002/stvr.1637},
+	eprint = {https://onlinelibrary.wiley.com/doi/pdf/10.1002/stvr.1637},
+	note = {e1637 stvr.1637},
+	year = {2019}
 } 
 ```
 
